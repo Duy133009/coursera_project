@@ -1,0 +1,77 @@
+// =====================================================
+// LITTLE LEMON DATABASE - ER DIAGRAM
+// Paste this into dbdiagram.io
+// =====================================================
+
+Table Cuisines {
+  cuisine_id int [pk, increment]
+  cuisine_name nvarchar(100) [not null, unique]
+}
+
+Table Countries {
+  country_id int [pk, increment]
+  country_name nvarchar(100) [not null, unique]
+  country_code nvarchar(5)
+}
+
+Table Cities {
+  city_id int [pk, increment]
+  city_name nvarchar(100) [not null]
+  country_id int [not null, ref: > Countries.country_id]
+  postal_code nvarchar(20)
+}
+
+Table MenuItems {
+  menu_item_id int [pk, increment]
+  item_name nvarchar(255) [not null]
+  item_type nvarchar(50) [not null, note: 'Starter, Course, Dessert, Drink, Side']
+  cuisine_id int [ref: > Cuisines.cuisine_id]
+  price decimal(10,2) [default: 0.00]
+}
+
+Table Customers {
+  customer_id nvarchar(20) [pk]
+  customer_name nvarchar(150) [not null]
+  city_id int [ref: > Cities.city_id]
+  email nvarchar(100)
+  phone nvarchar(20)
+  created_at datetime
+}
+
+Table Orders {
+  order_id nvarchar(20) [pk]
+  customer_id nvarchar(20) [not null, ref: > Customers.customer_id]
+  order_date date [not null]
+  delivery_date date
+  total_cost decimal(12,2)
+  sales decimal(12,2)
+  discount decimal(5,2)
+  delivery_cost decimal(10,2)
+  order_status nvarchar(20) [default: 'Pending']
+  created_at datetime
+}
+
+Table OrderDetails {
+  order_detail_id int [pk, increment]
+  order_id nvarchar(20) [not null, ref: > Orders.order_id]
+  menu_item_id int [not null, ref: > MenuItems.menu_item_id]
+  quantity int [not null, default: 1]
+  unit_price decimal(10,2) [not null]
+}
+
+Table Bookings {
+  booking_id int [pk, increment]
+  customer_id nvarchar(20) [not null, ref: > Customers.customer_id]
+  booking_date date [not null]
+  table_number int [not null]
+  number_of_guests int [default: 2]
+  booking_status nvarchar(20) [default: 'Confirmed', note: 'Confirmed, Cancelled, Completed']
+  created_at datetime
+}
+
+Table Staff {
+  staff_id int [pk, increment]
+  staff_name nvarchar(150) [not null]
+  role nvarchar(50) [not null]
+  salary decimal(10,2)
+}
